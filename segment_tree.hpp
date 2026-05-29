@@ -45,7 +45,7 @@
  *   tree.query(0, 4);     // returns max element in [0, 4]
  * @endcode
  */
-template <typename T, typename Operator = std::plus<T>>
+template <typename T, typename Operator = std::plus<int>>
 class SegmentTree {
 private:
   struct Node {

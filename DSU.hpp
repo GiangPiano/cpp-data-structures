@@ -133,7 +133,7 @@ public:
      *
      * @throws std::out_of_range if either element does not exist.
      */
-    bool connected(const T& a, const T& b) {
+    bool isConnected(const T& a, const T& b) {
         return find(a) == find(b);
     }
 
@@ -142,7 +142,7 @@ public:
      *
      * @throws std::out_of_range if x does not exist.
      */
-    size_t size(const T& x) {
+    size_t component_size_of(const T& x) {
         T root = find(x);
         return size_[root];
     }
@@ -150,14 +150,14 @@ public:
     /**
      * @brief Returns the number of disjoint sets/components.
      */
-    size_t components() const {
+    size_t component_count() const {
         return components_;
     }
 
     /**
      * @brief Returns the number of elements stored in the DSU.
      */
-    size_t count() const {
+    size_t size() const {
         return parent_.size();
     }
 

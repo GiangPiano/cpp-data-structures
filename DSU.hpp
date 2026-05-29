@@ -60,9 +60,7 @@ public:
      * Each element starts in its own separate set.
      */
     DSU(const std::vector<T>& elems) : components_(0) {
-        for (const T& elem : elems) {
-            add(elem);
-        }
+        for (const T& elem : elems) add(elem);
     }
 
     /**
@@ -93,9 +91,7 @@ public:
      * @throws std::out_of_range if x does not exist in the DSU.
      */
     T find(const T& x) {
-        if (!contains(x)) {
-            throw std::out_of_range("DSU::find called on element not in DSU");
-        }
+        if (!contains(x)) throw std::out_of_range("DSU::find called on element not in DSU");
 
         if (parent_[x] == x) return x;
 
@@ -112,17 +108,15 @@ public:
      * @throws std::out_of_range if either element does not exist.
      */
     bool unite(const T& a, const T& b) {
-        T rootA = find(a);
-        T rootB = find(b);
+        T root_a = find(a);
+        T root_b = find(b);
 
-        if (rootA == rootB) return false;
+        if (root_a == root_b) return false;
 
-        if (size_[rootA] < size_[rootB]) {
-            std::swap(rootA, rootB);
-        }
+        if (size_[root_a] < size_[root_b]) std::swap(root_a, root_b);
 
-        parent_[rootB] = rootA;
-        size_[rootA] += size_[rootB];
+        parent_[root_b] = root_a;
+        size_[root_a] += size_[root_b];
         components_--;
 
         return true;
@@ -133,9 +127,7 @@ public:
      *
      * @throws std::out_of_range if either element does not exist.
      */
-    bool isConnected(const T& a, const T& b) {
-        return find(a) == find(b);
-    }
+    bool is_connected(const T& a, const T& b) { return find(a) == find(b); }
 
     /**
      * @brief Returns the size of the set containing x.
@@ -150,21 +142,15 @@ public:
     /**
      * @brief Returns the number of disjoint sets/components.
      */
-    size_t component_count() const {
-        return components_;
-    }
+    size_t component_count() const { return components_; }
 
     /**
      * @brief Returns the number of elements stored in the DSU.
      */
-    size_t size() const {
-        return parent_.size();
-    }
+    size_t size() const { return parent_.size(); }
 
     /**
      * @brief Returns true if the DSU contains no elements.
      */
-    bool empty() const {
-        return parent_.empty();
-    }
+    bool empty() const { return parent_.empty(); }
 };

@@ -11,11 +11,11 @@
 class Trie {
   struct TrieNode {
     std::array<std::unique_ptr<TrieNode>, 26> children;
-    bool is_word;
+    bool is_word = false;
   };
 
   std::unique_ptr<TrieNode> root;
-  int size_;
+  size_t size_;
 
 public:
   Trie() : root{std::make_unique<TrieNode>()}, size_{0} {}
@@ -23,62 +23,72 @@ public:
   void insert(const std::string& word) {
     TrieNode* node = root.get();
     for (char c : word) {
-      int cur = c - 'a';
-      if (!node->children[cur]) node->children[cur] = std::make_unique<TrieNode>();
-      node = node->children[cur].get();
+      int idx = c - 'a';
+      if (!node->children[idx]) node->children[idx] = std::make_unique<TrieNode>();
+      node = node->children[idx].get();
     }
+    if (node->is_word) return;
     node->is_word = true;
+    size_++;
   }
 
   void erase(const std::string& word) {
     TrieNode* node = root.get();
     for (char c : word) {
-      int cur = c - 'a';
-      node = node->children[cur].get();
-      if (!node) return;
+      int idx = c - 'a';
+      if (!node->children[idx]) return;
+      node = node->children[idx].get();
     }
+    if (!node->is_word) return;
     node->is_word = false;
+    size_--;
   }
 
-  bool contains(const std::string& word) {
+  [[nodiscard]] bool contains(const std::string& word) const {
     TrieNode* node = root.get();
     for (char c : word) {
-      int cur = c - 'a';
-      node = node->children[cur].get();
-      if (!node) return false;
+      int idx = c - 'a';
+      if (!node->children[idx]) return false;
+      node = node->children[idx].get();
     }
     return node->is_word;
   }
 
-  std::vector<std::string> search(const std::string& prefix) {
+  [[nodiscard]] bool hasPrefix(const std::string& word) const {
+    TrieNode* node = root.get();
+    for (char c : word) {
+      int idx = c - 'a';
+      if (!node->children[idx]) return false;
+      node = node->children[idx].get();
+    }
+    return true;
+  }
+
+  [[nodiscard]] std::vector<std::string> search(const std::string& prefix) const {
     std::vector<std::string> res{};
     TrieNode* node = root.get();
 
     for (char c : prefix) {
-      int cur = c - 'a';
-      node = node->children[cur].get();
-      if (!node) return res;
+      int idx = c - 'a';
+      if (!node->children[idx]) return {};
+      node = node->children[idx].get();
     }
 
-    std::queue<std::pair<TrieNode*, std::string>> bfs({{node, prefix}});
+    std::queue<std::pair<const TrieNode*, std::string>> bfs({{node, prefix}});
     while (!bfs.empty()) {
-      auto& [node, str] = bfs.front();
+      auto [curr, str] = bfs.front();
       bfs.pop();
-
-      if (node->is_word) res.push_back(str);
-
+      if (curr->is_word) res.push_back(str);
       for (char c = 'a'; c <= 'z'; c++) {
-        int cur = c - 'a';
-        if (!node->children[cur]) continue;
-        TrieNode* next = node->children[cur].get();
-        bfs.push({next, str + c});
+        const TrieNode* next = curr->children[c - 'a'].get();
+        if (next) bfs.push({next, str + c});
       }
     }
 
     return res;
   }
 
-  size_t size() {
+  [[nodiscard]] size_t size() const {
     return size_;
   }
 };

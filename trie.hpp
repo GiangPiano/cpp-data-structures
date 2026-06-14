@@ -30,6 +30,16 @@ public:
     node->is_word = true;
   }
 
+  void erase(const std::string& word) {
+    TrieNode* node = root.get();
+    for (char c : word) {
+      int cur = c - 'a';
+      node = node->children[cur].get();
+      if (!node) return;
+    }
+    node->is_word = false;
+  }
+
   bool contains(const std::string& word) {
     TrieNode* node = root.get();
     for (char c : word) {
